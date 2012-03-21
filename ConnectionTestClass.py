@@ -16,13 +16,15 @@ class ConnectionTestClass:
     internalURL = ''
     externalURL = ''
     group = ''
+    verbose = False
 
-    def __init__(self, configFile = 'ASA.conf'):
+    def __init__(self, configFile = 'ASA.conf', verbose = False):
         """
         @params: configFile
 
         Initialisation of parameters necessary for the Connectivity Test.
         """
+        self.verbose = verbose
         self.__readConfig(configFile)
         tmp = self.vpnserver.split('.')
         self.vpnshort = tmp[0]
@@ -76,11 +78,14 @@ class ConnectionTestClass:
         Performs speed test based on url and isExternal. Alternate between Internal and External test.
         Returns file containing average speed of file download.
         """
+        self.__printLog('Speed Test Started')
         try:
             tmpfile = tempfile.mkstemp()
+            self.__printLog('Fetching remote file')
             com = pexpect.spawn('wget -o '+ tmpfile[1] + " "+ url, timeout=300)
             com.expect(pexpect.EOF)
             com.close()
+            self.__printLog('File downloaded successfully')
             file = open(tmpfile[1], 'r')
             for line in file:
                 if 'MB/s' in line:
@@ -118,6 +123,7 @@ class ConnectionTestClass:
         Performs ping test and retrieve ping time.
         Returns file with ping time.
         """
+        self.__printLog('Ping Test Started')
         try:
             com = pexpect.spawn('ping -c 1 google.de')
             com.expect('rtt')
@@ -127,6 +133,7 @@ class ConnectionTestClass:
             pFile.write(ping[0])
             pFile.close()
             com.close()
+            self.__printLog('Ping Test successful')
         except Exception:
             print('An error occurred during the ping operation')
             pFile = open(self.pingFile, 'w')
@@ -139,6 +146,7 @@ class ConnectionTestClass:
 
         Preforms a DNS Lookup against the give URL.
         """
+        self.__printLog('DNS lookup Started')
         try:
             com = pexpect.spawn('nslookup '+URL)
             com.expect(pexpect.EOF)
@@ -146,6 +154,7 @@ class ConnectionTestClass:
             file.write(str(com.before))
             file.close()
             com.close()
+            self.__printLog('DNS lookup successful')
         except Exception:
             print('DNS Lookup Failed')
             file = open(self.nslookupFile, 'w')
@@ -159,6 +168,7 @@ class ConnectionTestClass:
 
         Reads a config file containing different parameters and loads them into the appropriate local parameters.
         """
+        self.__printLog('Reading config file')
         try:
             tempData = open(configFile, 'r')
             data = json.load(tempData)
@@ -169,12 +179,19 @@ class ConnectionTestClass:
             self.internalURL = data['internalURL']
             self.externalURL = data['externalURL']
             self.group = data['group']
+            self.__printLog('Config file successfully read')
         except Exception:
             print('Config file could not be loaded!')
             print('File not present or badly formatted JSON.')
             exit(1)
 
+    def __printLog(self, out):
+        """
+        @params out
 
-
-
-
+        Prints a LOG output if the verbose flag is raised.
+        """
+        if self.verbose:
+            print(out)
+        else:
+            pass
