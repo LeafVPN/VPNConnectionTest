@@ -29,6 +29,7 @@ class ConnectionTestClass:
         self.speedFileInt = self.prefix+'.speedInt'
         self.speedFileExt = self.prefix+'.speedExt'
         self.pingFile = self.prefix+'.ping'
+        self.nslookupFile = self.prefix+'.DNS'
         self.lastTest = self.prefix+'.lastTest'
 
 
