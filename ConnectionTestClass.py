@@ -128,10 +128,9 @@ class ConnectionTestClass:
             com.close()
         except Exception:
             print('An error occurred during the ping operation')
-            #pFile = open(self.pingFile, 'w')
-            #pFile.write('Ping failed')
-            #pFile.close()
-            #print(exc)
+            pFile = open(self.pingFile, 'w')
+            pFile.write('Ping failed')
+            pFile.close()
 
     def __nsLookup(self, URL):
         """
@@ -148,9 +147,9 @@ class ConnectionTestClass:
             com.close()
         except Exception:
             print('DNS Lookup Failed')
-            #file = open(self.nslookupFile, 'w')
-            #file.write('Last DNS Lookup failed')
-            #file.close()
+            file = open(self.nslookupFile, 'w')
+            file.write('Last DNS Lookup failed')
+            file.close()
 
 
     def __readConfig(self, configFile):
