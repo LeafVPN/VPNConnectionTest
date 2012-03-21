@@ -6,4 +6,4 @@ import ConnectionTestClass as vpn
 #vpnuser and vpnpass must be set before proceeding
 
 testAgent = vpn.ConnectionTestClass()
-testAgent.__readConfig("ASA.conf")
+testAgent.beginTest()

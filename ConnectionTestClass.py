@@ -13,10 +13,12 @@ class ConnectionTestClass:
     lastTest = ''
     nslookupFile = ''
     prefix = ''
+    internalURL = ''
+    externalURL = ''
 
     def __init__(self, configFile = 'ASA.conf'):
         """
-        @params: String: vpnuser, vpnpass, vpnserver
+        @params: configFile
 
         Initialisation of parameters necessary for the Connectivity Test.
         """
@@ -49,16 +51,18 @@ class ConnectionTestClass:
         file.write('Time to connect: '+str(tm)+'\n')
         file.close()
         self.pingTest()
-        self.speedTest('http://www.bbned.nl/scripts/speedtest/download/file32mb.bin', True)
+        self.nsLookup('uni-stuttgart.de')
+        self.speedTest(self.externalURL, True)
+        #self.speedTest(self.externalURL, False)
         com.close()
 
 
-    def speedTest(self, url, bool):
+    def speedTest(self, url, isExternal):
         """
-        @param: String: url
-        @param: boolean: bool
+        @param: url
+        @param: isExternal
 
-        Performs speed test based on url and bool. Alternate between Internal and External test.
+        Performs speed test based on url and isExternal. Alternate between Internal and External test.
         Returns file containing average speed of file download.
         """
         tmpfile = tempfile.mkstemp()
@@ -70,7 +74,7 @@ class ConnectionTestClass:
             if 'MB/s' in line:
                 temp = line.split('(')
                 tmp = temp[1].split(')')
-                if bool:
+                if isExternal:
                     sFile = open(self.speedFileExt, 'w')
                     sFile.write(tmp[0]+'\n')
                     sFile.close()
@@ -81,7 +85,7 @@ class ConnectionTestClass:
             elif 'KB/s' in line:
                 temp = line.split('(')
                 tmp = temp[1].split(')')
-                if bool:
+                if isExternal:
                     sFile = open(self.speedFileExt, 'w')
                     sFile.write(tmp[0]+'\n')
                     sFile.close()
@@ -110,14 +114,26 @@ class ConnectionTestClass:
         com.close()
 
     def __readConfig(self, configFile):
+        """
+        @params configFile
+
+        Reads a config file containing different parameters and loads them into the appropriate local parameters.
+        """
         tempData = open(configFile, 'r')
         data = json.load(tempData)
         self.vpnuser = data['vpnuser']
         self.vpnserver = data['vpnserver']
         self.vpnpass = data['vpnpass']
         self.resultDirectory = data['resultDirectory']
+        self.internalURL = data['internalURL']
+        self.externalURL = data['externalURL']
 
     def nsLookup(self, URL):
+        """
+        @params URL
+
+        Preforms a DNS Lookup against the give URL.
+        """
         com = pexpect.spawn('nslookup '+URL)
         com.expect(pexpect.EOF)
         file = open(self.nslookupFile, 'w')
