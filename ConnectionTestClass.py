@@ -109,14 +109,17 @@ class ConnectionTestClass:
             com = pexpect.spawn('ping -c 1 google.de')
             com.expect('rtt')
             pingT = str(com.before).split('time=')
-            ping = pingT[1].split('--')
+            ping = pingT[1].split('ms')
             pFile = open(self.pingFile, 'w')
             pFile.write(ping[0])
             pFile.close()
             com.close()
-        except Exception as exc:
-            print('This is the ping exception:')
-            print(exc)
+        except Exception:
+            print('An error occurred during the ping operation')
+            pFile = open(self.pingFile, 'w')
+            pFile.write('Ping failed')
+            pFile.close()
+            #print(exc)
 
 
     def __readConfig(self, configFile):
@@ -125,14 +128,17 @@ class ConnectionTestClass:
 
         Reads a config file containing different parameters and loads them into the appropriate local parameters.
         """
-        tempData = open(configFile, 'r')
-        data = json.load(tempData)
-        self.vpnuser = data['vpnuser']
-        self.vpnserver = data['vpnserver']
-        self.vpnpass = data['vpnpass']
-        self.resultDirectory = data['resultDirectory']
-        self.internalURL = data['internalURL']
-        self.externalURL = data['externalURL']
+        try:
+            tempData = open(configFile, 'r')
+            data = json.load(tempData)
+            self.vpnuser = data['vpnuser']
+            self.vpnserver = data['vpnserver']
+            self.vpnpass = data['vpnpass']
+            self.resultDirectory = data['resultDirectory']
+            self.internalURL = data['internalURL']
+            self.externalURL = data['externalURL']
+        except Exception:
+            print('Config file could not be loaded')
 
     def nsLookup(self, URL):
         """
