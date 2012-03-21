@@ -104,14 +104,18 @@ class ConnectionTestClass:
         Performs ping test and retrieve ping time.
         Returns file with ping time.
         """
-        com = pexpect.spawn('ping -c 1 google.de')
-        com.expect('rtt')
-        pingT = str(com.before).split('time=')
-        ping = pingT[1].split('--')
-        pFile = open(self.pingFile, 'w')
-        pFile.write(ping[0])
-        pFile.close()
-        com.close()
+        try:
+            com = pexpect.spawn('ping -c 1 google.de')
+            com.expect('rtt')
+            pingT = str(com.before).split('time=')
+            ping = pingT[1].split('--')
+            pFile = open(self.pingFile, 'w')
+            pFile.write(ping[0])
+            pFile.close()
+            com.close()
+        except Exception as exc:
+            print(exc)
+
 
     def __readConfig(self, configFile):
         """
