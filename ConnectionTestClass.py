@@ -43,10 +43,12 @@ class ConnectionTestClass:
         Connect to the VPN and preform the ping and speed tests.
         4 Files are returned containing latest test, ping time, speed of connection and time to connect.
         """
+        self.__printLog('Beginning Test...')
         try:
             file = open(self.lastTest, 'w')
             file.write(str(datetime.datetime.now())+'\n')
             start = time.time()
+            self.__printLog('Attempting to connect...')
             com = pexpect.spawn('openconnect -u ' + self.vpnuser + ' ' + self.vpnserver)
             if 'asa3' in self.vpnserver:
                 com.expect('GROUP:')
@@ -56,6 +58,7 @@ class ConnectionTestClass:
             com.expect('Established DTLS connection')
             stop = time.time()
             tm = stop - start
+            self.__printLog('Connection established.')
             file.write('Time to connect: '+str(tm)+'\n')
             file.close()
             com.close()
@@ -66,6 +69,7 @@ class ConnectionTestClass:
         self.__pingTest()
         self.__nsLookup('uni-stuttgart.de')
         self.__speedTest(self.externalURL, True)
+        self.__printLog('Test completed successfully!')
         #self.__speedTest(self.externalURL, False)
 
 
@@ -78,14 +82,14 @@ class ConnectionTestClass:
         Performs speed test based on url and isExternal. Alternate between Internal and External test.
         Returns file containing average speed of file download.
         """
-        self.__printLog('Speed Test Started')
+        self.__printLog('Speed Test Started...')
         try:
             tmpfile = tempfile.mkstemp()
-            self.__printLog('Fetching remote file')
+            self.__printLog('Fetching remote file...')
             com = pexpect.spawn('wget -o '+ tmpfile[1] + " "+ url, timeout=300)
             com.expect(pexpect.EOF)
             com.close()
-            self.__printLog('File downloaded successfully')
+            self.__printLog('File downloaded successfully.')
             file = open(tmpfile[1], 'r')
             for line in file:
                 if 'MB/s' in line:
@@ -114,7 +118,7 @@ class ConnectionTestClass:
             os.remove(tmpfile[1])
             os.remove(self.resultDirectory+'file32mb.bin')
         except Exception:
-            print('Speed Test Failed: Address Host unreachable')
+            print('Speed Test Failed: Address Host unreachable.')
 
     def __pingTest(self):
         """
@@ -123,7 +127,7 @@ class ConnectionTestClass:
         Performs ping test and retrieve ping time.
         Returns file with ping time.
         """
-        self.__printLog('Ping Test Started')
+        self.__printLog('Ping Test Started...')
         try:
             com = pexpect.spawn('ping -c 1 google.de')
             com.expect('rtt')
@@ -133,7 +137,7 @@ class ConnectionTestClass:
             pFile.write(ping[0])
             pFile.close()
             com.close()
-            self.__printLog('Ping Test successful')
+            self.__printLog('Ping Test successful.')
         except Exception:
             print('An error occurred during the ping operation')
             pFile = open(self.pingFile, 'w')
@@ -146,7 +150,7 @@ class ConnectionTestClass:
 
         Preforms a DNS Lookup against the give URL.
         """
-        self.__printLog('DNS lookup Started')
+        self.__printLog('DNS lookup Started...')
         try:
             com = pexpect.spawn('nslookup '+URL)
             com.expect(pexpect.EOF)
@@ -154,11 +158,11 @@ class ConnectionTestClass:
             file.write(str(com.before))
             file.close()
             com.close()
-            self.__printLog('DNS lookup successful')
+            self.__printLog('DNS lookup successful.')
         except Exception:
-            print('DNS Lookup Failed')
+            print('DNS Lookup Failed.')
             file = open(self.nslookupFile, 'w')
-            file.write('Last DNS Lookup failed')
+            file.write('Last DNS Lookup failed.')
             file.close()
 
 
@@ -168,7 +172,7 @@ class ConnectionTestClass:
 
         Reads a config file containing different parameters and loads them into the appropriate local parameters.
         """
-        self.__printLog('Reading config file')
+        self.__printLog('Reading config file...')
         try:
             tempData = open(configFile, 'r')
             data = json.load(tempData)
@@ -179,7 +183,7 @@ class ConnectionTestClass:
             self.internalURL = data['internalURL']
             self.externalURL = data['externalURL']
             self.group = data['group']
-            self.__printLog('Config file successfully read')
+            self.__printLog('Config file successfully loaded.')
         except Exception:
             print('Config file could not be loaded!')
             print('File not present or badly formatted JSON.')
