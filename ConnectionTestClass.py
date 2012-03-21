@@ -15,6 +15,7 @@ class ConnectionTestClass:
     prefix = ''
     internalURL = ''
     externalURL = ''
+    group = ''
 
     def __init__(self, configFile = 'ASA.conf'):
         """
@@ -40,25 +41,33 @@ class ConnectionTestClass:
         Connect to the VPN and preform the ping and speed tests.
         4 Files are returned containing latest test, ping time, speed of connection and time to connect.
         """
-        file = open(self.lastTest, 'w')
-        file.write(str(datetime.datetime.now())+'\n')
-        start = time.time()
-        com = pexpect.spawn('openconnect -u ' + self.vpnuser + ' ' + self.vpnserver)
-        com.expect('Password:')
-        com.sendline(self.vpnpass)
-        com.expect('Established DTLS connection')
-        stop = time.time()
-        tm = stop - start
-        file.write('Time to connect: '+str(tm)+'\n')
-        file.close()
-        self.pingTest()
-        self.nsLookup('uni-stuttgart.de')
-        self.speedTest(self.externalURL, True)
-        #self.speedTest(self.externalURL, False)
-        com.close()
+        try:
+            file = open(self.lastTest, 'w')
+            file.write(str(datetime.datetime.now())+'\n')
+            start = time.time()
+            com = pexpect.spawn('openconnect -u ' + self.vpnuser + ' ' + self.vpnserver)
+            if 'asa3' in self.vpnserver:
+                com.expect('GROUP: [USTUTT|USTUTT-IPv6]')
+                com.sendline(self.group)
+            com.expect('Password:')
+            com.sendline(self.vpnpass)
+            com.expect('Established DTLS connection')
+            stop = time.time()
+            tm = stop - start
+            file.write('Time to connect: '+str(tm)+'\n')
+            file.close()
+            com.close()
+        except Exception:
+            print('Could not connect to ASA server')
+            #exit(1)
+        self.__pingTest()
+        self.__nsLookup('uni-stuttgart.de')
+        self.__speedTest(self.externalURL, True)
+        #self.__speedTest(self.externalURL, False)
 
 
-    def speedTest(self, url, isExternal):
+
+    def __speedTest(self, url, isExternal):
         """
         @param: url
         @param: isExternal
@@ -66,39 +75,42 @@ class ConnectionTestClass:
         Performs speed test based on url and isExternal. Alternate between Internal and External test.
         Returns file containing average speed of file download.
         """
-        tmpfile = tempfile.mkstemp()
-        com = pexpect.spawn('wget -o '+ tmpfile[1] + " "+ url, timeout=300)
-        com.expect(pexpect.EOF)
-        com.close()
-        file = open(tmpfile[1], 'r')
-        for line in file:
-            if 'MB/s' in line:
-                temp = line.split('(')
-                tmp = temp[1].split(')')
-                if isExternal:
-                    sFile = open(self.speedFileExt, 'w')
-                    sFile.write(tmp[0]+'\n')
-                    sFile.close()
-                else:
-                    sFile = open(self.speedFileInt, 'w')
-                    sFile.write(tmp[0]+'\n')
-                    sFile.close()
-            elif 'KB/s' in line:
-                temp = line.split('(')
-                tmp = temp[1].split(')')
-                if isExternal:
-                    sFile = open(self.speedFileExt, 'w')
-                    sFile.write(tmp[0]+'\n')
-                    sFile.close()
-                else:
-                    sFile = open(self.speedFileInt, 'w')
-                    sFile.write(tmp[0]+'\n')
-                    sFile.close()
-        file.close()
-        os.remove(tmpfile[1])
-        os.remove(self.resultDirectory+'file32mb.bin')
+        try:
+            tmpfile = tempfile.mkstemp()
+            com = pexpect.spawn('wget -o '+ tmpfile[1] + " "+ url, timeout=300)
+            com.expect(pexpect.EOF)
+            com.close()
+            file = open(tmpfile[1], 'r')
+            for line in file:
+                if 'MB/s' in line:
+                    temp = line.split('(')
+                    tmp = temp[1].split(')')
+                    if isExternal:
+                        sFile = open(self.speedFileExt, 'w')
+                        sFile.write(tmp[0]+'\n')
+                        sFile.close()
+                    else:
+                        sFile = open(self.speedFileInt, 'w')
+                        sFile.write(tmp[0]+'\n')
+                        sFile.close()
+                elif 'KB/s' in line:
+                    temp = line.split('(')
+                    tmp = temp[1].split(')')
+                    if isExternal:
+                        sFile = open(self.speedFileExt, 'w')
+                        sFile.write(tmp[0]+'\n')
+                        sFile.close()
+                    else:
+                        sFile = open(self.speedFileInt, 'w')
+                        sFile.write(tmp[0]+'\n')
+                        sFile.close()
+            file.close()
+            os.remove(tmpfile[1])
+            os.remove(self.resultDirectory+'file32mb.bin')
+        except Exception:
+            print('Speed Test Failed: Address Host unreachable')
 
-    def pingTest(self):
+    def __pingTest(self):
         """
         @params: None
 
@@ -116,10 +128,29 @@ class ConnectionTestClass:
             com.close()
         except Exception:
             print('An error occurred during the ping operation')
-            pFile = open(self.pingFile, 'w')
-            pFile.write('Ping failed')
-            pFile.close()
+            #pFile = open(self.pingFile, 'w')
+            #pFile.write('Ping failed')
+            #pFile.close()
             #print(exc)
+
+    def __nsLookup(self, URL):
+        """
+        @params URL
+
+        Preforms a DNS Lookup against the give URL.
+        """
+        try:
+            com = pexpect.spawn('nslookup '+URL)
+            com.expect(pexpect.EOF)
+            file = open(self.nslookupFile, 'w')
+            file.write(str(com.before))
+            file.close()
+            com.close()
+        except Exception:
+            print('DNS Lookup Failed')
+            #file = open(self.nslookupFile, 'w')
+            #file.write('Last DNS Lookup failed')
+            #file.close()
 
 
     def __readConfig(self, configFile):
@@ -137,21 +168,12 @@ class ConnectionTestClass:
             self.resultDirectory = data['resultDirectory']
             self.internalURL = data['internalURL']
             self.externalURL = data['externalURL']
+            self.group = data['group']
         except Exception:
-            print('Config file could not be loaded')
+            print('Config file could not be loaded!')
+            print('File not present or badly formatted JSON.')
+            exit(1)
 
-    def nsLookup(self, URL):
-        """
-        @params URL
-
-        Preforms a DNS Lookup against the give URL.
-        """
-        com = pexpect.spawn('nslookup '+URL)
-        com.expect(pexpect.EOF)
-        file = open(self.nslookupFile, 'w')
-        file.write(str(com.before))
-        file.close()
-        com.close()
 
 
 
