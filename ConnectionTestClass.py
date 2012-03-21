@@ -119,6 +119,7 @@ class ConnectionTestClass:
             os.remove(self.resultDirectory+'file32mb.bin')
         except Exception:
             print('Speed Test Failed: Address Host unreachable.')
+            exit(1)
 
     def __pingTest(self):
         """
