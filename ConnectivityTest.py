@@ -5,5 +5,5 @@ __author__ = 'Patricio Cano'
 import ConnectionTestClass as vpn
 #vpnuser and vpnpass must be set before proceeding
 
-testAgent = vpn.ConnectionTestClass()
+testAgent = vpn.ConnectionTestClass(verbose=True)
 testAgent.beginTest()
