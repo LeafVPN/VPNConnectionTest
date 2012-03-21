@@ -115,6 +115,7 @@ class ConnectionTestClass:
             pFile.close()
             com.close()
         except Exception as exc:
+            print('This is the ping exception:')
             print(exc)
 
 
