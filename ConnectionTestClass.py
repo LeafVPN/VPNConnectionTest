@@ -47,7 +47,7 @@ class ConnectionTestClass:
             start = time.time()
             com = pexpect.spawn('openconnect -u ' + self.vpnuser + ' ' + self.vpnserver)
             if 'asa3' in self.vpnserver:
-                com.expect('GROUP: [USTUTT|USTUTT-IPv6]')
+                com.expect('GROUP:')
                 com.sendline(self.group)
             com.expect('Password:')
             com.sendline(self.vpnpass)
@@ -57,9 +57,10 @@ class ConnectionTestClass:
             file.write('Time to connect: '+str(tm)+'\n')
             file.close()
             com.close()
-        except Exception:
+        except Exception as exc:
+            print(exc)
             print('Could not connect to ASA server')
-            #exit(1)
+            exit(1)
         self.__pingTest()
         self.__nsLookup('uni-stuttgart.de')
         self.__speedTest(self.externalURL, True)
