@@ -96,7 +96,7 @@ class ConnectionTestClass:
                     sFile.close()
         file.close()
         os.remove(tmpfile[1])
-        os.remove(self.prefix+'file32mb.bin')
+        os.remove(self.resultDirectory+'file32mb.bin')
 
     def pingTest(self):
         """
