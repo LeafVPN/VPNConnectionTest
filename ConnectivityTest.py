@@ -2,8 +2,8 @@
 __author__ = 'Patricio Cano'
 
 
-import ConnectionTestClass as vpn
-#vpnuser and vpnpass must be set before proceeding
+import argparse, ConnectionTestClass as vpn
+#Config File necessary.
 
 testAgent = vpn.ConnectionTestClass()
 testAgent.beginTest()
