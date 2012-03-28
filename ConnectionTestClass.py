@@ -142,7 +142,7 @@ class ConnectionTestClass:
         except Exception:
             print('An error occurred during the ping operation')
             pFile = open(self.pingFile, 'w')
-            pFile.write('Ping failed')
+            pFile.write('Ping failed.\n')
             pFile.close()
 
     def __nsLookup(self, URL):
@@ -185,8 +185,9 @@ class ConnectionTestClass:
             self.externalURL = data['externalURL']
             self.group = data['group']
             self.__printLog('Config file successfully loaded.')
-        except Exception:
+        except Exception as exc:
             print('Config file could not be loaded!')
+            print exc
             print('File not present or badly formatted JSON.')
             exit(1)
 
