@@ -48,7 +48,7 @@ class ConnectionTestClass:
             file = open(self.lastTest, 'w')
             file.write(str(datetime.datetime.now())+'\n')
             start = time.time()
-            self.__printLog('Attempting to connect...')
+            self.__printLog('Attempting to connect to '+ self.vpnserver)
             com = pexpect.spawn('openconnect -u ' + self.vpnuser + ' ' + self.vpnserver)
             if 'asa3' in self.vpnserver:
                 com.expect('GROUP:')
@@ -85,7 +85,7 @@ class ConnectionTestClass:
         self.__printLog('Speed Test Started...')
         try:
             tmpfile = tempfile.mkstemp()
-            self.__printLog('Fetching file...')
+            self.__printLog('Fetching file from '+url)
             com = pexpect.spawn('wget -o '+ tmpfile[1] + " "+ url, timeout=300)
             com.expect(pexpect.EOF)
             self.__printLog(str(com.before))
@@ -98,7 +98,7 @@ class ConnectionTestClass:
                     com.close()
             if cont:
                 com.close()
-                self.__printLog('File downloaded successfully.')
+                self.__printLog('File downloaded successfully at:')
                 for line in file:
                     if 'MB/s' in line:
                         temp = line.split('(')
@@ -106,10 +106,12 @@ class ConnectionTestClass:
                         if isExternal:
                             sFile = open(self.speedFileExt, 'w')
                             sFile.write(tmp[0]+'\n')
+                            self.__printLog(tmp[0])
                             sFile.close()
                         else:
                             sFile = open(self.speedFileInt, 'w')
                             sFile.write(tmp[0]+'\n')
+                            self.__printLog(tmp[0])
                             sFile.close()
                     elif 'KB/s' in line:
                         temp = line.split('(')
@@ -117,10 +119,12 @@ class ConnectionTestClass:
                         if isExternal:
                             sFile = open(self.speedFileExt, 'w')
                             sFile.write(tmp[0]+'\n')
+                            self.__printLog(tmp[0])
                             sFile.close()
                         else:
                             sFile = open(self.speedFileInt, 'w')
                             sFile.write(tmp[0]+'\n')
+                            self.__printLog(tmp[0])
                             sFile.close()
                 file.close()
                 if isExternal:
