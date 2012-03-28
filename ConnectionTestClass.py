@@ -69,8 +69,8 @@ class ConnectionTestClass:
         self.__pingTest()
         self.__nsLookup('uni-stuttgart.de')
         self.__speedTest(self.externalURL, True)
+        self.__speedTest(self.internalURL, False)
         self.__printLog('Test completed successfully!')
-        #self.__speedTest(self.externalURL, False)
 
 
 
@@ -85,40 +85,51 @@ class ConnectionTestClass:
         self.__printLog('Speed Test Started...')
         try:
             tmpfile = tempfile.mkstemp()
-            self.__printLog('Fetching remote file...')
+            self.__printLog('Fetching file...')
             com = pexpect.spawn('wget -o '+ tmpfile[1] + " "+ url, timeout=300)
             com.expect(pexpect.EOF)
-            com.close()
-            self.__printLog('File downloaded successfully.')
+            self.__printLog(str(com.before))
             file = open(tmpfile[1], 'r')
+            cont = True
             for line in file:
-                if 'MB/s' in line:
-                    temp = line.split('(')
-                    tmp = temp[1].split(')')
-                    if isExternal:
-                        sFile = open(self.speedFileExt, 'w')
-                        sFile.write(tmp[0]+'\n')
-                        sFile.close()
-                    else:
-                        sFile = open(self.speedFileInt, 'w')
-                        sFile.write(tmp[0]+'\n')
-                        sFile.close()
-                elif 'KB/s' in line:
-                    temp = line.split('(')
-                    tmp = temp[1].split(')')
-                    if isExternal:
-                        sFile = open(self.speedFileExt, 'w')
-                        sFile.write(tmp[0]+'\n')
-                        sFile.close()
-                    else:
-                        sFile = open(self.speedFileInt, 'w')
-                        sFile.write(tmp[0]+'\n')
-                        sFile.close()
-            file.close()
-            os.remove(tmpfile[1])
-            os.remove(self.resultDirectory+'file32mb.bin')
-        except Exception:
+                if 'ERROR 403' in line:
+                    print('Access to file forbidden.\nRoutes to internal network not set.')
+                    cont = False
+                    com.close()
+            if cont:
+                com.close()
+                self.__printLog('File downloaded successfully.')
+                for line in file:
+                    if 'MB/s' in line:
+                        temp = line.split('(')
+                        tmp = temp[1].split(')')
+                        if isExternal:
+                            sFile = open(self.speedFileExt, 'w')
+                            sFile.write(tmp[0]+'\n')
+                            sFile.close()
+                        else:
+                            sFile = open(self.speedFileInt, 'w')
+                            sFile.write(tmp[0]+'\n')
+                            sFile.close()
+                    elif 'KB/s' in line:
+                        temp = line.split('(')
+                        tmp = temp[1].split(')')
+                        if isExternal:
+                            sFile = open(self.speedFileExt, 'w')
+                            sFile.write(tmp[0]+'\n')
+                            sFile.close()
+                        else:
+                            sFile = open(self.speedFileInt, 'w')
+                            sFile.write(tmp[0]+'\n')
+                            sFile.close()
+                file.close()
+                if isExternal:
+                    os.remove(self.resultDirectory+'file32mb.bin')
+                os.remove(tmpfile[1])
+
+        except Exception as exc:
             print('Speed Test Failed: Address Host unreachable.')
+            print(exc)
             exit(1)
 
     def __pingTest(self):
