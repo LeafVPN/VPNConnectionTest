@@ -88,7 +88,6 @@ class ConnectionTestClass:
             self.__printLog('Fetching file from '+url)
             com = pexpect.spawn('wget -o '+ tmpfile[1] + " "+ url, timeout=300)
             com.expect(pexpect.EOF)
-            self.__printLog(str(com.before))
             file = open(tmpfile[1], 'r')
             cont = True
             for line in file:
