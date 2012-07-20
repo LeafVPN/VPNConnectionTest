@@ -1,0 +1,9 @@
+{
+    "vpnuser":"vpncheck@rus.uni-stuttgart.de",
+    "vpnpass":"GHkIG56OvovRknXbLkBu",
+    "vpnserver":"asa2.rus.uni-stuttgart.de",
+    "resultDirectory":"/home/vpncheck/nks-monitoring/VPNConnectionTest/result",
+    "internalURL":"http://www.bbned.nl/scripts/speedtest/download/file32mb.bin",
+    "externalURL":"http://ftp.uni-stuttgart.de/rus/Release",
+    "group":"USTUTT"
+}

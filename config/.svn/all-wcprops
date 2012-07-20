@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config
+END
+asa1-rus.conf
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa1-rus.conf
+END
+asa2-rus.conf
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa2-rus.conf
+END
+asa3-rus.conf
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa3-rus.conf
+END
+asa1-usadr.conf
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa1-usadr.conf
+END
+asa2-usadr.conf
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa2-usadr.conf
+END
+asa1-stud.conf
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa1-stud.conf
+END
+asa3-usadr.conf
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa3-usadr.conf
+END
+asa2-stud.conf
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa2-stud.conf
+END
+asa3-stud.conf
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa3-stud.conf
+END
+vpn-rus.conf
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/vpn-rus.conf
+END
+vpn-usadr.conf
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/vpn-usadr.conf
+END
+vpn-stud.conf
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/vpn-stud.conf
+END
+asa3-ipv6-rus.conf
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa3-ipv6-rus.conf
+END
+asa3-usadr-ipv6.conf
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa3-usadr-ipv6.conf
+END
+asa3-ipv6-stud.conf
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/nks-monitoring/!svn/ver/24/VPNConnectionTest/config/asa3-ipv6-stud.conf
+END
