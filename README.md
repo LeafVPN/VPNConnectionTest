@@ -1,5 +1,4 @@
 #ASA Connectivity Test
-##Uni Stuttgart
 
 This files are part of a project started by the Rechenzentrum Universität Stuttgart as part of a monitoring service for different servers.
 
